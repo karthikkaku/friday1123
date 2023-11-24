@@ -9,6 +9,12 @@ param (
     [string]$Description
 )
 
+$accessKey = "AKIAXQPI3TT7S4MP4AO3"
+$secretKey = "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"
+
+
+Set-AWSCredential -AccessKey $accessKey -SecretKey $secretKey
+
 # Import the AWSPowerShell module
 if (-not (Get-Module -Name AWSPowerShell -ErrorAction SilentlyContinue)) {
     Install-Module -Name AWSPowerShell -Force -Verbose
