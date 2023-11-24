@@ -50,4 +50,5 @@ if ($amiStatus -eq "available") {
     Write-Output "AMI creation completed. AMI ID: $AMIId"
 } else {
     Write-Output "AMI creation failed or timed out."
+}
 
