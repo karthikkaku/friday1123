@@ -1,4 +1,6 @@
-#create ami for instance
+# Import AWS PowerShell module
+Import-Module AWSPowerShell
+
 param (
     [Parameter(Mandatory = $true)]
     [string]$InstanceID,
@@ -9,8 +11,6 @@ param (
     [Parameter(Mandatory = $true)]
     [string]$Description
 )
-
-
 
 # Generate a unique timestamp
 $Timestamp = Get-Date -Format "yyyyMMddHHmmss"
@@ -36,7 +36,6 @@ $AMIId = New-EC2Image @AMIParams
 
 Write-Output "Creating AMI with ID: $AMIId and name: $AMIName"
 
-
 # Wait for the AMI creation to complete
 Write-Output "Waiting for the AMI creation to complete..."
 $amiStatus = "pending"
@@ -51,4 +50,3 @@ if ($amiStatus -eq "available") {
 } else {
     Write-Output "AMI creation failed or timed out."
 }
-
