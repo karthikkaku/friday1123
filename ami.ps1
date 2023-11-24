@@ -1,4 +1,4 @@
-#create ami for 
+#create ami for instance
 param (
     [Parameter(Mandatory = $true)]
     [string]$InstanceID,
