@@ -1,5 +1,5 @@
 # Import AWS PowerShell module
-Import-Module AWSPowerShell
+Import-Module -Name AWSPowerShell
 
 param (
     [Parameter(Mandatory = $true)]
