@@ -1,6 +1,3 @@
-Install-Module -Name AWSPowerShell -Force -Verbose
-Import-Module AWSPowerShell
-
 param (
     [Parameter(Mandatory = $true)]
     [string]$InstanceID,
@@ -11,6 +8,12 @@ param (
     [Parameter(Mandatory = $true)]
     [string]$Description
 )
+
+# Import the AWSPowerShell module
+if (-not (Get-Module -Name AWSPowerShell -ErrorAction SilentlyContinue)) {
+    Install-Module -Name AWSPowerShell -Force -Verbose
+}
+Import-Module AWSPowerShell
 
 # Generate a unique timestamp
 $Timestamp = Get-Date -Format "yyyyMMddHHmmss"
