@@ -1,3 +1,6 @@
+Install-Module -Name AWSPowerShell -Force -Verbose
+Import-Module AWSPowerShell
+
 param (
     [Parameter(Mandatory = $true)]
     [string]$InstanceID,
