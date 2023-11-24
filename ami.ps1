@@ -9,6 +9,7 @@ param (
     [string]$Description
 )
 
+#credentials to connect aws
 $accessKey = "AKIAXQPI3TT7S4MP4AO3"
 $secretKey = "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"
 
