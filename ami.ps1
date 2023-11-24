@@ -1,6 +1,3 @@
-# Import AWS PowerShell module
-Import-Module -Name AWSPowerShell
-
 param (
     [Parameter(Mandatory = $true)]
     [string]$InstanceID,
