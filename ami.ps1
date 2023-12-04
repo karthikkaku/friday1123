@@ -15,7 +15,7 @@ $secretKey = "V8dtS0FLXqPN7jT0lai/BR7EucDaiPvtGX/K9/Cy"
 
 
 Set-AWSCredential -AccessKey $accessKey -SecretKey $secretKey
-Set-DefaultAWSRegion -Region us-east-1
+Set-DefaultAWSRegion -Region us-east-2
 
 # Import the AWSPowerShell module
 if (-not (Get-Module -Name AWSPowerShell -ErrorAction SilentlyContinue)) {
