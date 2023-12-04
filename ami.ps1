@@ -10,12 +10,12 @@ param (
 )
 
 #credentials to connect aws
-$accessKey = "AKIAXQPI3TT7S4MP4AO3"
-$secretKey = "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"
+$accessKey = "AKIAY7SEYN2PJFJXRVLE"
+$secretKey = "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"
 
 
 Set-AWSCredential -AccessKey $accessKey -SecretKey $secretKey
-Set-DefaultAWSRegion -Region us-east-2
+Set-DefaultAWSRegion -Region us-east-1
 
 # Import the AWSPowerShell module
 if (-not (Get-Module -Name AWSPowerShell -ErrorAction SilentlyContinue)) {
