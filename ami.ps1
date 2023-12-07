@@ -61,9 +61,11 @@ while ($amiStatus -eq "pending") {
 if ($amiStatus -eq "available") {
     Write-Output "AMI creation completed. AMI ID: $AMIId"
 
-    # Add a message for successful AMI creation with the AMI ID
-    "AMI updated. New AMI ID: $AMIId" | Out-File -FilePath "ami_creation_message.txt"
+    # Send a Slack notification using the Jenkins Slack Plugin
+    $slackMessage = "AMI updated. New AMI ID: $AMIId"
+    sh "curl -X POST -H 'Content-type: application/json' --data '{\"text\":\"$slackMessage\"}' https://slack.com/api/chat.postMessage"
 } else {
     Write-Output "AMI creation failed or timed out."
 }
+
 
