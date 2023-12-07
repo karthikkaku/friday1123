@@ -68,14 +68,16 @@ if ($amiStatus -eq "available") {
     } | ConvertTo-Json
 
     # Send a Slack notification using PowerShell equivalent of shell command
-    $jsonBodyEscaped = $jsonBody -replace '"', '\"'  # Escape double quotes
-    $command = "curl -X POST -H 'Content-type: application/json' --data '$jsonBodyEscaped' https://slack.com/api/chat.postMessage"
+    $uri = "https://slack.com/api/chat.postMessage"
+    $headers = @{ "Content-type" = "application/json" }
+    $body = @{ "text" = $slackMessage } | ConvertTo-Json
+
+    # Construct the command with proper parameterization
+    $command = "Invoke-RestMethod -Method Post -Uri '$uri' -Headers \$headers -Body \$body"
     Invoke-Expression -Command $command
 } else {
     Write-Output "AMI creation failed or timed out."
 }
-
-
 
 
 
