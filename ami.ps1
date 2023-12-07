@@ -58,6 +58,8 @@ while ($amiStatus -eq "pending") {
 
 # ... (Previous code remains unchanged)
 
+# ... (Previous code remains unchanged)
+
 if ($amiStatus -eq "available") {
     Write-Output "AMI creation completed. AMI ID: $AMIId"
 
@@ -70,10 +72,11 @@ if ($amiStatus -eq "available") {
     # Send a Slack notification using PowerShell equivalent of shell command
     $uri = "https://slack.com/api/chat.postMessage"
     $headers = @{ "Content-type" = "application/json" }
-    $body = @{ "text" = $slackMessage } | ConvertTo-Json
+    $body = $jsonBody
 
     # Construct the command with proper parameterization
-    $command = "Invoke-RestMethod -Method Post -Uri '$uri' -Headers \$headers -Body \$body"
+    $jsonBodyEncoded = [System.Web.HttpUtility]::UrlEncode($body)
+    $command = "Invoke-WebRequest -Uri '$uri' -Headers \$headers -Method Post -Body '$jsonBodyEncoded'"
     Invoke-Expression -Command $command
 } else {
     Write-Output "AMI creation failed or timed out."
