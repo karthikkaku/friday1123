@@ -61,11 +61,15 @@ while ($amiStatus -eq "pending") {
 if ($amiStatus -eq "available") {
     Write-Output "AMI creation completed. AMI ID: $AMIId"
 
-    # Send a Slack notification using the Jenkins Slack Plugin
+    # Send a Slack notification using PowerShell equivalent of shell command
     $slackMessage = "AMI updated. New AMI ID: $AMIId"
-    sh "curl -X POST -H 'Content-type: application/json' --data '{\"text\":\"$slackMessage\"}' https://slack.com/api/chat.postMessage"
+
+    # Example using Invoke-Expression to execute a shell command
+    $command = "curl -X POST -H 'Content-type: application/json' --data '{\"text\":\"$slackMessage\"}' https://slack.com/api/chat.postMessage"
+    Invoke-Expression -Command $command
 } else {
     Write-Output "AMI creation failed or timed out."
 }
+
 
 
