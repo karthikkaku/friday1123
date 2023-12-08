@@ -58,10 +58,6 @@ while ($amiStatus -eq "pending") {
 
 # ... (Previous code remains unchanged)
 
-# ... (Previous code remains unchanged)
-
-# ... (Previous code remains unchanged)
-
 if ($amiStatus -eq "available") {
     Write-Output "AMI creation completed. AMI ID: $AMIId"
 
@@ -70,7 +66,7 @@ if ($amiStatus -eq "available") {
 
     # Slack API endpoint and message payload
     $uri = "https://slack.com/api/chat.postMessage"
-    $headers = @{ "Authorization" = "Bearer YOUR_SLACK_API_TOKEN" }  # Replace with your Slack API token
+    $headers = @{ "Authorization" = "xoxb-6304431362048-6316813170452-4zC00NJoXNtX5104jQLFQVyw" }  # Replace with your Slack API token
     $body = @{
         text = $slackMessage
     }
@@ -80,5 +76,6 @@ if ($amiStatus -eq "available") {
 } else {
     Write-Output "AMI creation failed or timed out."
 }
+
 
 
