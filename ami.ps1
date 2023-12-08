@@ -56,7 +56,8 @@ while ($amiStatus -eq "pending") {
     $amiStatus = $ami.State
 }
 
-# ... (Previous code remains unchanged)
+# (Your script up to the Slack integration)
+# ...
 
 if ($amiStatus -eq "available") {
     Write-Output "AMI creation completed. AMI ID: $AMIId"
@@ -66,16 +67,21 @@ if ($amiStatus -eq "available") {
 
     # Slack API endpoint and message payload
     $uri = "https://slack.com/api/chat.postMessage"
-    $headers = @{ "Authorization" = "xoxb-6304431362048-6316813170452-4zC00NJoXNtX5104jQLFQVyw" }  # Replace with your Slack API token
+    $token = "xoxb-6304431362048-6316813170452-4zC00NJoXNtX5104jQLFQVyw"  # Replace with your Slack API token
+    $headers = @{
+        "Authorization" = "Bearer $token"
+    }
     $body = @{
         text = $slackMessage
     }
 
     # Send a Slack notification using PowerShell equivalent of REST API call
-    Invoke-RestMethod -Uri $uri -Headers $headers -Method Post -ContentType "application/json" -Body ($body | ConvertTo-Json)
+    try {
+        $response = Invoke-RestMethod -Uri $uri -Headers $headers -Method Post -ContentType "application/json" -Body ($body | ConvertTo-Json)
+        Write-Output "Slack API call successful. Response: $response"
+    } catch {
+        Write-Output "Error sending message to Slack. $_"
+    }
 } else {
     Write-Output "AMI creation failed or timed out."
 }
-
-
-
