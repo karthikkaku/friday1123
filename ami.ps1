@@ -85,3 +85,4 @@ if ($amiStatus -eq "available") {
 } else {
     Write-Output "AMI creation failed or timed out."
 }
+
