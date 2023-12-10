@@ -69,7 +69,7 @@ if ($amiStatus -eq "available") {
     $uri = "https://slack.com/api/chat.postMessage"
     $token = "xoxb-6304431362048-6316813170452-gqm7JmFpuBb5W4XIaud8q9vs"  # Replace with your Slack API token
     $headers = @{
-        "Authorization" = "Bearer $token"
+        "Authentication" = "Bearer $token"
     }
     $body = @{
         text = $slackMessage
