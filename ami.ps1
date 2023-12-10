@@ -1,3 +1,5 @@
+$env:SLACK_API_TOKEN = "xoxb-6304431362048-6307499320727-S8maeHA29wfke8s2lK6F7SrY"
+
 param (
     [Parameter(Mandatory = $true)]
     [string]$InstanceID,
@@ -67,7 +69,7 @@ if ($amiStatus -eq "available") {
 
     # Slack API endpoint and message payload
     $uri = "https://slack.com/api/chat.postMessage"
-    $token = "xoxb-6304431362048-6307499320727-yrbSrwT2IRbgo04jzyrPt6gx"  # Replace with your Slack API token
+    $token = $env:SLACK_API_TOKEN  # Replace with your Slack API token
     $headers = @{
         "Authorization" = "Bearer $token"
     }
