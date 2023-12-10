@@ -1,4 +1,4 @@
-$env:SLACK_API_TOKEN = "xoxb-6304431362048-6307499320727-S8maeHA29wfke8s2lK6F7SrY"
+$env:SLACK_API_TOKEN = "xoxb-6304431362048-6307499320727-aRhPhrssSEXLLpexw8Rxen2W"
 
 param (
     [Parameter(Mandatory = $true)]
