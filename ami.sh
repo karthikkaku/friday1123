@@ -5,6 +5,10 @@ InstanceID=$1
 BaseAMIName=$2
 Description=$3
 
+echo "Instance ID: $InstanceID"
+echo "BaseAMIName: $BaseAMIName"
+echo "Description: $Description"
+
 # Set your Slack API token here
 SLACK_API_TOKEN="xoxb-6304431362048-6320659208197-YqD4S8FA2leoPaceMnKOEM2m"
 
