@@ -1,5 +1,3 @@
-$env:SLACK_API_TOKEN = "xoxb-6304431362048-6320659208197-YqD4S8FA2leoPaceMnKOEM2m"
-
 param (
     [Parameter(Mandatory = $true)]
     [string]$InstanceID,
@@ -11,7 +9,54 @@ param (
     [string]$Description
 )
 
-# Rest of your code remains unchanged up to the point where Slack integration starts
+# Set your Slack API token here
+$env:SLACK_API_TOKEN = "xoxb-6304431362048-6320659208197-YqD4S8FA2leoPaceMnKOEM2m"
+
+#credentials to connect AWS - replace with your actual credentials
+$accessKey = "AKIAY7SEYN2PAKWIB7MX"
+$secretKey = "hbzGl96S+KRip53HEgN6ib5icbocvPSvVmsNr21z"
+
+Set-AWSCredential -AccessKey $accessKey -SecretKey $secretKey
+Set-DefaultAWSRegion -Region us-east-2
+
+# Import the AWSPowerShell module
+if (-not (Get-Module -Name AWSPowerShell -ErrorAction SilentlyContinue)) {
+    Install-Module -Name AWSPowerShell -Force -Verbose
+}
+Import-Module AWSPowerShell
+
+# Generate a unique timestamp
+$Timestamp = Get-Date -Format "yyyyMMddHHmmss"
+
+# Create a unique AMI name by appending the timestamp to the base AMI name
+$AMIName = "${BaseAMIName}_${Timestamp}"
+
+# Check if an AMI with the specified name already exists
+$existingAmi = Get-EC2Image -Owners self -Filters @{Name = "name"; Values = $AMIName}
+
+if ($existingAmi) {
+    Write-Output "An AMI with the name '$AMIName' already exists (AMI ID: $($existingAmi.ImageId)). Please choose a different base AMI name."
+    exit 0
+}
+
+# Create an AMI from the specified EC2 instance
+$AMIParams = @{
+    InstanceId = $InstanceID
+    Name = $AMIName
+    Description = $Description
+}
+$AMIId = New-EC2Image @AMIParams
+
+Write-Output "Creating AMI with ID: $AMIId and name: $AMIName"
+
+# Wait for the AMI creation to complete
+Write-Output "Waiting for the AMI creation to complete..."
+$amiStatus = "pending"
+while ($amiStatus -eq "pending") {
+    Start-Sleep -Seconds 30  # Wait for 30 seconds before checking again
+    $ami = Get-EC2Image -ImageIds $AMIId
+    $amiStatus = $ami.State
+}
 
 # Slack notification integration
 if ($amiStatus -eq "available") {
