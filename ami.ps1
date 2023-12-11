@@ -1,4 +1,4 @@
-$env:SLACK_API_TOKEN = "xoxb-6304431362048-6307499320727-OHwm05HewxfIXN8ZT4TbpXmk"
+$env:SLACK_API_TOKEN = "xoxb-6304431362048-6320659208197-YqD4S8FA2leoPaceMnKOEM2m"
 
 param (
     [Parameter(Mandatory = $true)]
@@ -58,9 +58,8 @@ while ($amiStatus -eq "pending") {
     $amiStatus = $ami.State
 }
 
-# (Your script up to the Slack integration)
-# ...
 
+# Slack notification integration
 if ($amiStatus -eq "available") {
     Write-Output "AMI creation completed. AMI ID: $AMIId"
 
@@ -87,4 +86,3 @@ if ($amiStatus -eq "available") {
 } else {
     Write-Output "AMI creation failed or timed out."
 }
-
