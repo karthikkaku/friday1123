@@ -46,13 +46,8 @@ done
 
 if [ "$amiStatus" = "available" ]; then
     echo "AMI creation completed. AMI ID: $AMIId"
-
-    # Construct the Slack message
-    slackMessage="AMI updated. New AMI ID: $AMIId"
-
-    # Slack API call using curl
-    curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $SLACK_API_TOKEN" -d "{\"text\":\"$slackMessage\"}" https://slack.com/api/chat.postMessage
-
+    export AMI_ID=$AMIId
+    
 else
     echo "AMI creation failed or timed out."
 fi
