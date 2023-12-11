@@ -47,6 +47,7 @@ done
 if [ "$amiStatus" = "available" ]; then
     echo "AMI creation completed. AMI ID: $AMIId"
     echo "AMI creation completed. AMI ID: $AMIId" >> result.txt
+    curl -X POST -H 'Content-type: application/json' --data '{"text":"$AMIId AMI Created Successfully"}' https://hooks.slack.com/services/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
     
     
 else
