@@ -46,7 +46,8 @@ done
 
 if [ "$amiStatus" = "available" ]; then
     echo "AMI creation completed. AMI ID: $AMIId"
-    export AMI_ID=$AMIId
+    echo "AMI creation completed. AMI ID: $AMIId" >> result.txt
+    
     
 else
     echo "AMI creation failed or timed out."
