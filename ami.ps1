@@ -1,89 +1,58 @@
-param (
-    [Parameter(Mandatory = $true)]
-    [string]$InstanceID,
+# Check if AWS CLI is installed
+if (-not (Test-Path (Join-Path $env:ProgramFiles 'Amazon\AWSCLI\aws.exe'))){
+    # AWS CLI not found, installing AWS CLI
+    Write-Output "AWS CLI not found. Installing AWS CLI..."
+    Invoke-WebRequest -Uri "https://awscli.amazonaws.com/AWSCLIV2.msi" -OutFile "$env:TEMP\AWSCLIV2.msi"
+    Start-Process -Wait -FilePath msiexec -ArgumentList "/i $env:TEMP\AWSCLIV2.msi /qn" -NoNewWindow
+}
 
-    [Parameter(Mandatory = $true)]
-    [string]$BaseAMIName,
+# Check AWS CLI version
+$awsVersion = aws --version
 
-    [Parameter(Mandatory = $true)]
-    [string]$Description
-)
+Write-Output "AWS CLI installed. Version: $awsVersion"
+
+# Parameters - Instance ID, Base AMI Name, and Description
+$InstanceID = $args[0]
+$BaseAMIName = $args[1]
+$Description = $args[2]
+
+Write-Output "Instance ID: $InstanceID"
+Write-Output "BaseAMIName: $BaseAMIName"
+Write-Output "Description: $Description"
 
 # Set your Slack API token here
-$env:SLACK_API_TOKEN = "xoxb-6304431362048-6320659208197-YqD4S8FA2leoPaceMnKOEM2m"
-
-#credentials to connect AWS - replace with your actual credentials
-$accessKey = "AKIAY7SEYN2PAKWIB7MX"
-$secretKey = "hbzGl96S+KRip53HEgN6ib5icbocvPSvVmsNr21z"
-
-Set-AWSCredential -AccessKey $accessKey -SecretKey $secretKey
-Set-DefaultAWSRegion -Region us-east-2
-
-# Import the AWSPowerShell module
-if (-not (Get-Module -Name AWSPowerShell -ErrorAction SilentlyContinue)) {
-    Install-Module -Name AWSPowerShell -Force -Verbose
-}
-Import-Module AWSPowerShell
+$SLACK_API_TOKEN = "xoxb-6304431362048-6320659208197-YqD4S8FA2leoPaceMnKOEM2m"
 
 # Generate a unique timestamp
 $Timestamp = Get-Date -Format "yyyyMMddHHmmss"
 
 # Create a unique AMI name by appending the timestamp to the base AMI name
 $AMIName = "${BaseAMIName}_${Timestamp}"
-
 # Check if an AMI with the specified name already exists
-$existingAmi = Get-EC2Image -Owners self -Filters @{Name = "name"; Values = $AMIName}
+$existingAmi = aws ec2 describe-images --owners self --filters "Name=name,Values=$AMIName" --query 'Images[*].ImageId' --output text
 
 if ($existingAmi) {
-    Write-Output "An AMI with the name '$AMIName' already exists (AMI ID: $($existingAmi.ImageId)). Please choose a different base AMI name."
+    Write-Output "An AMI with the name '$AMIName' already exists (AMI ID: $existingAmi). Please choose a different base AMI name."
     exit 0
 }
 
 # Create an AMI from the specified EC2 instance
-$AMIParams = @{
-    InstanceId = $InstanceID
-    Name = $AMIName
-    Description = $Description
-}
-$AMIId = New-EC2Image @AMIParams
+$AMIId = aws ec2 create-image --instance-id $InstanceID --name $AMIName --description $Description --output text
 
 Write-Output "Creating AMI with ID: $AMIId and name: $AMIName"
 
 # Wait for the AMI creation to complete
-Write-Output "Waiting for the AMI creation to complete..."
 $amiStatus = "pending"
 while ($amiStatus -eq "pending") {
     Start-Sleep -Seconds 30  # Wait for 30 seconds before checking again
-    $ami = Get-EC2Image -ImageIds $AMIId
-    $amiStatus = $ami.State
+    $ami = aws ec2 describe-images --image-ids $AMIId --query 'Images[*].State' --output text
+    $amiStatus = $ami
 }
 
-# Slack notification integration
 if ($amiStatus -eq "available") {
     Write-Output "AMI creation completed. AMI ID: $AMIId"
-
-    # Construct the Slack message
-    $slackMessage = "AMI updated. New AMI ID: $AMIId"
-
-    # Slack API endpoint and message payload
-    $uri = "https://slack.com/api/chat.postMessage"
-    $token = $env:SLACK_API_TOKEN  # Replace with your Slack API token
-    $headers = @{
-        "Authorization" = "Bearer $token"
-    }
-    $body = @{
-        text = $slackMessage
-    }
-
-    # Send a Slack notification using PowerShell equivalent of REST API call
-    try {
-        $response = Invoke-RestMethod -Uri $uri -Headers $headers -Method Post -ContentType "application/json" -Body ($body | ConvertTo-Json) -ErrorAction Stop
-        Write-Output "Slack API call successful. Response: $response"
-    } catch {
-        Write-Output "Error sending message to Slack: $_"
-        Write-Output "The detailed error message: $($_.Exception.Message)"
-        # Add more logging or handling here if needed
-    }
+    $text = "$AMIId AMI Created Successfully"
+    Invoke-RestMethod -Uri "https://hooks.slack.com/services/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" -Method Post -Body (@{text = $text} | ConvertTo-Json) -ContentType "application/json"
 } else {
     Write-Output "AMI creation failed or timed out."
 }
